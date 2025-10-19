@@ -13,6 +13,15 @@ import {
 } from './elements';
 import { Message } from 'components/common';
 
+const RESTAURANT_SERVICE =
+  process.env.REACT_APP_RESTAURANT_SERVICE_URL || 'http://lvh.me:3001';
+
+export async function getRestaurants() {
+  const url = `${RESTAURANT_SERVICE}/api/restaurants`;
+  const resp = await axios.get(url);
+  return resp.data;
+}
+
 const Restaurants = () => {
   const [filters, setFilters] = useState({
     rating: 0,
@@ -23,10 +32,6 @@ const Restaurants = () => {
   const { Panel } = Collapse;
   const [form] = Form.useForm();
 
-  const getRestaurants = async () => {
-    const { data } = await axios.get('http://lvh.me:3001/api/restaurants');
-    return data;
-  };
   const { data } = useQuery('restaurants', getRestaurants);
 
   const filteredData = getFilterData(data, filters);

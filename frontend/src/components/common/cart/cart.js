@@ -19,7 +19,7 @@ const Cart = ({ onClose, isSidebarVisible, setIsSidebarVisible }) => {
 
   const handleDeleteItem = (clickedRow) => {
     const reducedData = orderListState.filter((item) =>
-      item.name === clickedRow.name ? false : true
+      item.name === clickedRow.name ? false : true,
     );
     setOrderList(reducedData);
   };
@@ -65,7 +65,7 @@ const Cart = ({ onClose, isSidebarVisible, setIsSidebarVisible }) => {
             let totalPrice = 0;
 
             pageData.forEach(
-              ({ price, count }) => (totalPrice += price * count)
+              ({ price, count }) => (totalPrice += price * count),
             );
 
             return (

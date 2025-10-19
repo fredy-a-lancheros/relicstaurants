@@ -8,16 +8,21 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useRecoilState } from 'recoil';
 
+const CHECKOUT_SERVICE =
+  process.env.REACT_APP_CHECKOUT_SERVICE_URL || 'http://lvh.me:3002';
+
+export async function handleOrderSending(order) {
+  const url = `${CHECKOUT_SERVICE}/api/checkout`;
+  const resp = await axios.post(url, order);
+  return resp.data;
+}
+
 const Payments = () => {
   const [orderListState, setOrderListState] = useRecoilState(orderList);
   const [totalCost, setTotalCost] = useState(0);
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const { Option } = Select;
-
-  const handleOrderSending = async (payload) => {
-    await axios.post('http://lvh.me:3002/api/checkout', payload);
-  };
 
   const columns = [
     {
