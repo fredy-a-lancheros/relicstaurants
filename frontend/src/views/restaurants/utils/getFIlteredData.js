@@ -6,7 +6,7 @@ export const getFilterData = (data, filters) => {
       .filter((value) => value.rating >= filters.rating)
       .filter((value) => value.price >= filters.prices)
       .filter((value) =>
-        filters.cuisine ? value.cuisine === filters.cuisine : true
+        filters.cuisine ? value.cuisine === filters.cuisine : true,
       );
     return filteredData;
   }

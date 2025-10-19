@@ -36,16 +36,41 @@ exports.start = function(PORT, STATIC_DIR, DATA_FILE) {
 
 
   // start the server
-  // read the data from json and start the server
-  fs.readFile(DATA_FILE, function(_err, data) {
-    JSON.parse(data).forEach(function(restaurant) {
-      storage.add(new RestaurantRecord(restaurant));
-    });
+  // Allow inline DATA_JSON or fallback to DATA_FILE (env or local file)
+  var dataFilePath = process.env.DATA_FILE || DATA_FILE || (__dirname + '/data/restaurants.json');
 
+  if (process.env.DATA_JSON) {
+    try {
+      JSON.parse(process.env.DATA_JSON).forEach(function(restaurant) {
+        storage.add(new RestaurantRecord(restaurant));
+      });
+    } catch (e) {
+      console.error('Error parsing DATA_JSON:', e.message || e);
+    }
     app.listen(PORT, function() {
-      console.log('Go to http://localhost:' + PORT + '/');
+      console.log('Started with DATA_JSON. Go to http://localhost:' + PORT + '/');
     });
-  });
+  } else {
+    fs.readFile(dataFilePath, 'utf8', function(err, data) {
+      if (err) {
+        console.warn('Warning: could not read DATA_FILE:', dataFilePath, err.message || err);
+        app.listen(PORT, function() {
+          console.log('Started with empty dataset. Go to http://localhost:' + PORT + '/');
+        });
+        return;
+      }
+      try {
+        JSON.parse(data).forEach(function(restaurant) {
+          storage.add(new RestaurantRecord(restaurant));
+        });
+      } catch (e) {
+        console.error('Error parsing DATA_FILE JSON:', e.message || e);
+      }
+      app.listen(PORT, function() {
+        console.log('Go to http://localhost:' + PORT + '/');
+      });
+    });
+  }
 
 
   // Windows and Node.js before 0.8.9 would crash

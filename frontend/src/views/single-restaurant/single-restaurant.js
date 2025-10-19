@@ -12,11 +12,14 @@ import {
   RestaurantImage,
 } from './single-restaurant.styled';
 
-const getRestaurant = async (id) => {
-  const { data } = await axios.get(`http://lvh.me:3003/api/menu/${id}`);
+const MENU_SERVICE =
+  process.env.REACT_APP_MENU_SERVICE_URL || 'http://lvh.me:3003';
 
-  return data;
-};
+export async function getRestaurant(id) {
+  const url = `${MENU_SERVICE}/api/menu/${id}`;
+  const resp = await axios.get(url);
+  return resp.data;
+}
 
 const SingleRestaurant = () => {
   const { id } = useParams();
@@ -27,7 +30,7 @@ const SingleRestaurant = () => {
 
   const handleAddToCart = (clickedRow) => {
     const isItemInCart = orderListItems.find(
-      (item) => item.name === clickedRow.name
+      (item) => item.name === clickedRow.name,
     );
 
     message.success(`${clickedRow.name} added to cart`, 1);
@@ -36,7 +39,7 @@ const SingleRestaurant = () => {
       const newData = orderListItems.map((item) =>
         item.name === clickedRow.name
           ? { ...item, count: item.count + 1 }
-          : item
+          : item,
       );
       setOrderList(newData);
     } else {
